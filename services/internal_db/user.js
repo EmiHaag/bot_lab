@@ -4,7 +4,12 @@ import { createRequire } from "module";
 import mysql from "mysql";
 
 const getUserData = async (user_id) => {
+  console.log("consultando base de datos de usuario: ", user_id);
   return new Promise((resolve, reject) => {
+    console.log("database: ", process.env.USER_DB);
+    console.log("host: ", process.env.HOST);
+    console.log("user: ", process.env.USER_DB);
+    console.log("port: ", process.env.MYSQLPORT);
     const con = mysql.createPool({
       host: process.env.HOST,
       user: process.env.USER_DB,
