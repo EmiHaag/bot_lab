@@ -13,8 +13,8 @@ const USER_ID = 1; //nombre Emiliano, nombre empresa: La bona pasta, temporal , 
 
 console.log("solicitando a bd usuario: ", USER_ID);
 
-//var current_user = await user.getUserData(USER_ID);
-//console.log("User: ", current_user.nombre_fantasia);
+var current_user = await user.getUserData(USER_ID);
+console.log("User: ", current_user.nombre_fantasia);
 const PEDIDO = [];
 
 //console.log(givenMenu);
