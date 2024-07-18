@@ -10,6 +10,7 @@ const getUserData = async (user_id) => {
       user: process.env.USER_DB,
       password: process.env.PASSWORD_DB,
       database: process.env.DATABASE,
+      port: process.env.MYSQLPORT,
       charset: "utf8mb4",
       debug: true,
     });
