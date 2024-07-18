@@ -6,10 +6,10 @@ import mysql from "mysql";
 const getUserData = async (user_id) => {
   return new Promise((resolve, reject) => {
     const con = mysql.createPool({
-      host: MYSQL_PRIVATE_URL,
-      user: MYSQLUSER,
-      password: MYSQLPASSWORD,
-      database: MYSQL_DATABASE,
+      host: process.env.MYSQLHOST,
+      user: process.env.MYSQLUSER,
+      password: process.env.MYSQLPASSWORD,
+      database: process.env.MYSQL_DATABASE,
       charset: "utf8mb4",
       debug: true,
     });
