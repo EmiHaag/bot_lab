@@ -4,10 +4,10 @@ import mysql from "mysql";
 const hacerPedido = async (datosPedido) => {
   return new Promise((resolve, reject) => {
     const con = mysql.createPool({
-      host: process.env.MYSQLHOST,
-      user: process.env.MYSQLUSER,
-      password: process.env.MYSQLPASSWORD,
-      database: process.env.MYSQL_DATABASE,
+      host: process.env.HOST,
+      user: process.env.USER_DB,
+      password: process.env.PASSWORD_DB,
+      database: process.env.DATABASE,
       charset: "utf8mb4",
       debug: true,
     });
@@ -27,7 +27,8 @@ const hacerPedido = async (datosPedido) => {
     con.query(q_str, function (error, results) {
       if (error) {
         console.log(
-          "OCURRIO UN ERROR AL INSERTAR PEDIDO EN NUESTRA BASE DE DATOS.."
+          "OCURRIO UN ERROR AL OBTENER DATOS DE LA BASE DE DATOS TABLE USER :",
+          error.message
         );
         console.log(error);
         console.log(datosPedido);

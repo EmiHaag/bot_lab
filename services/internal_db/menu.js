@@ -6,10 +6,10 @@ import mysql from "mysql";
 const getMenu = async (user_id) => {
   return new Promise((resolve, reject) => {
     const con = mysql.createPool({
-      host: process.env.MYSQLHOST,
-      user: process.env.MYSQLUSER,
-      password: process.env.MYSQLPASSWORD,
-      database: process.env.MYSQL_DATABASE,
+      host: process.env.HOST,
+      user: process.env.USER_DB,
+      password: process.env.PASSWORD_DB,
+      database: process.env.DATABASE,
       charset: "utf8mb4",
       debug: true,
     });
@@ -23,7 +23,8 @@ const getMenu = async (user_id) => {
     con.query(q_str, function (error, results) {
       if (error) {
         console.log(
-          "OCURRIO UN ERROR AL OBTENER DATOS DE LA BASE DE DATOS MENU"
+          "OCURRIO UN ERROR AL OBTENER DATOS DE LA BASE DE DATOS TABLE USER :",
+          error.message
         );
       } else {
         /* results.forEach((element) => {
