@@ -4,11 +4,12 @@ import mysql from "mysql";
 const hacerPedido = async (datosPedido) => {
   return new Promise((resolve, reject) => {
     const con = mysql.createPool({
-      host: process.env.HOST,
-      user: process.env.USER_DB,
-      password: process.env.PASSWORD_DB,
-      database: process.env.DATABASE,
+      host: MYSQLHOST,
+      user: MYSQLUSER,
+      password: MYSQLPASSWORD,
+      database: MYSQL_DATABASE,
       charset: "utf8mb4",
+      debug: true,
     });
     const q_str =
       "INSERT INTO " +
