@@ -10,11 +10,13 @@ import hacerPedido from "./services/internal_db/pedidos.js";
 //import chatgpt from "./services/openai/chatgpt.js";
 
 const USER_ID = 1; //nombre Emiliano, nombre empresa: La bona pasta, temporal , luego hay que automatizar--
-/* 
+
 console.log("solicitando a bd usuario: ", USER_ID);
+
 var current_user = await user.getUserData(USER_ID);
+console.log("User: ", current_user.nombre_fantasia);
 const PEDIDO = [];
- */
+
 //console.log(givenMenu);
 const flowPrincipal = bot.addKeyword(["resto"]).addAnswer([
   `Bienvenido/a *`,
