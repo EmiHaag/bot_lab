@@ -4,7 +4,7 @@ import mysql from "mysql";
 const hacerPedido = async (datosPedido) => {
   return new Promise((resolve, reject) => {
     const con = mysql.createPool({
-      host: MYSQLHOST,
+      host: MYSQL_PRIVATE_URL,
       user: MYSQLUSER,
       password: MYSQLPASSWORD,
       database: MYSQL_DATABASE,

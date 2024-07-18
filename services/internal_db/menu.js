@@ -6,7 +6,7 @@ import mysql from "mysql";
 const getMenu = async (user_id) => {
   return new Promise((resolve, reject) => {
     const con = mysql.createPool({
-      host: MYSQLHOST,
+      host: MYSQL_PRIVATE_URL,
       user: MYSQLUSER,
       password: MYSQLPASSWORD,
       database: MYSQL_DATABASE,
