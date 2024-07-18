@@ -13,11 +13,7 @@ const getUserData = async (user_id) => {
       charset: "utf8mb4",
       debug: true,
     });
-    const q_str =
-      "SELECT * from " +
-      process.env.TABLE_CLIENTES +
-      " where usr_id = " +
-      user_id;
+    const q_str = "SELECT * from clientes where usr_id = " + user_id;
 
     con.query(q_str, function (error, results) {
       if (error) {
