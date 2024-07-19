@@ -30,7 +30,8 @@ const getUserData = async (user_id) => {
         if (error) {
           console.log(
             "OCURRIO UN ERROR AL OBTENER DATOS DE LA BASE DE DATOS TABLE USER :",
-            error.message
+            error.message,
+            error.stack
           );
         } else {
           resolve(results[0]);
