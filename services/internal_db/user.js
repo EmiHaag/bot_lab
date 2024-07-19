@@ -9,17 +9,27 @@ const getUserData = async (user_id) => {
     console.log("database: ", process.env.USER_DB);
     console.log("host: ", process.env.HOST);
     console.log("user: ", process.env.USER_DB);
+    var con;
     try {
-      const con = mysql.createPool({
+      con = mysql.createPool({
         host: process.env.HOST,
         user: process.env.USER_DB,
         password: process.env.PASSWORD_DB,
         database: process.env.DATABASE,
         port: process.env.PORT,
+        connectTimeout: 60 * 1000,
         connectionLimit: 10,
         charset: "utf8mb4",
         debug: true,
       });
+    } catch (error) {
+      "OCURRIO UN ERROR AL CONECTAR A LA BASE DE DATOS :",
+        process.env.DATABASE,
+        " error ==> ";
+      error.message, error.stack;
+      con.end();
+    }
+    try {
       const q_str =
         "SELECT * from " +
         process.env.TABLE_CLIENTES +
@@ -33,12 +43,14 @@ const getUserData = async (user_id) => {
             error.message,
             error.stack
           );
+          console.log("query: ", q_str);
         } else {
           resolve(results[0]);
         }
       });
     } catch (error) {
       console.log(error);
+      con.end();
       resolve(error);
     }
   });
