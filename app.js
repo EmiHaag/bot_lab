@@ -1,5 +1,6 @@
 import { PORT } from "./services/internal_db/config.js";
 import { pool } from "./services/internal_db/db.js";
+import express from "express";
 import bot from "@bot-whatsapp/bot";
 import { getDay } from "date-fns";
 import QRPortalWeb from "@bot-whatsapp/portal";
