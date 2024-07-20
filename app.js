@@ -16,7 +16,7 @@ app.listen(PORT);
 const USER_ID = 1; //nombre Emiliano, nombre empresa: La bona pasta, temporal , luego hay que automatizar--
 
 app.get("/first-user", async (req, res) => {
-  const [rows] = await pool.query(`SELECT * FROM users WHERE ID = ${USER_ID}`);
+  const [rows] = await pool.query(`SELECT * FROM users WHERE id = ${USER_ID}`);
   res.json(rows);
   //res.send("Servicio disponible");
 });
