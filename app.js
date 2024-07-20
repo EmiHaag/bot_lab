@@ -151,7 +151,7 @@ const main = async () => {
     database: adapterDB,
   });
 
-  QRPortalWeb();
+  QRPortalWeb({ port: 8080 });
 };
 app.get("/user/" + USER_ID, async (req, res) => {
   const [rows] = await pool.query(`SELECT * FROM users WHERE id = ${USER_ID}`);
