@@ -15,24 +15,22 @@ const app = express();
 app.listen(PORT);
 
 const USER_ID = 1; //nombre Emiliano, nombre empresa: La bona pasta, temporal , luego hay que automatizar--
+var nombre_fantasia = "";
 
-app.get("/first-user", async (req, res) => {
-  const [rows] = await pool.query(`SELECT * FROM users WHERE id = ${USER_ID}`);
-  res.json(rows);
-  //res.send("Servicio disponible");
-});
-
+console.log("nombre fantasia 2 : ", nombre_fantasia);
 const PEDIDO = [];
 
 //console.log(givenMenu);
-const flowPrincipal = bot.addKeyword(["resto"]).addAnswer([
-  `Bienvenido/a *`,
-  //current_user.nombre_fantasia,
-  `* 🫕`,
-  `Tenemos menús diarios variados`,
-  `Te gustaria conocerlos ¿?`,
-  `Escribe *marito*`,
-]);
+const flowPrincipal = bot
+  .addKeyword(["resto"])
+  .addAnswer([
+    `Bienvenido/a *`,
+    nombre_fantasia,
+    `* 🫕`,
+    `Tenemos menús diarios variados`,
+    `Te gustaria conocerlos ¿?`,
+    `Escribe *marito*`,
+  ]);
 var givenMenu = [];
 const flowMenu = bot
   .addKeyword("marito")
@@ -155,5 +153,11 @@ const main = async () => {
 
   QRPortalWeb();
 };
-
-//main();
+app.get("/user/" + USER_ID, async (req, res) => {
+  const [rows] = await pool.query(`SELECT * FROM users WHERE id = ${USER_ID}`);
+  nombre_fantasia = rows.nombre_fantasia;
+  console.log("nombre fantasia: ", nombre_fantasia);
+  //res.json(rows);
+  main();
+  //res.send("Servicio disponible");
+});
