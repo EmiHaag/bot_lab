@@ -1,20 +1,26 @@
-import "dotenv/config";
+import { PORT } from "./services/internal_db/config.js";
+import { pool } from "./services/internal_db/db.js";
 import bot from "@bot-whatsapp/bot";
 import { getDay } from "date-fns";
 import QRPortalWeb from "@bot-whatsapp/portal";
 import BaileysProvider from "@bot-whatsapp/provider/baileys";
 import MockAdapter from "@bot-whatsapp/database/mock";
 import menu from "./services/internal_db/menu.js";
-import user from "./services/internal_db/user.js";
-import hacerPedido from "./services/internal_db/pedidos.js";
+//import user from "./services/internal_db/user.js";
+//import hacerPedido from "./services/internal_db/pedidos.js";
 //import chatgpt from "./services/openai/chatgpt.js";
+const app = express();
+
+app.listen(PORT);
 
 const USER_ID = 1; //nombre Emiliano, nombre empresa: La bona pasta, temporal , luego hay que automatizar--
 
-console.log("solicitando a bd usuario: ", USER_ID);
+app.get("/first-user", async (req, res) => {
+  const [rows] = await pool.query(`SELECT * FROM users WHERE ID = ${USER_ID}`);
+  res.json(rows);
+  //res.send("Servicio disponible");
+});
 
-var current_user = await user.getUserData(USER_ID);
-console.log("User: ", current_user.nombre_fantasia);
 const PEDIDO = [];
 
 //console.log(givenMenu);

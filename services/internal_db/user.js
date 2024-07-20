@@ -1,14 +1,7 @@
-import "dotenv/config";
-import { createRequire } from "module";
-//var mysql = require("mysql");
-import mysql from "mysql";
+import { createPool } from "mysql2/promise";
 
 const getUserData = async (user_id) => {
-  console.log("consultando base de datos de usuario: ", user_id);
   return new Promise((resolve, reject) => {
-    console.log("database: ", process.env.USER_DB);
-    console.log("host: ", process.env.HOST);
-    console.log("user: ", process.env.USER_DB);
     var con;
     try {
       con = mysql.createPool({
@@ -17,8 +10,10 @@ const getUserData = async (user_id) => {
         password: process.env.PASSWORD_DB,
         database: process.env.DATABASE,
         port: process.env.PORT,
-        connectTimeout: 60 * 1000,
+        connectTimeout: 10000,
+        waitForConnections: true,
         connectionLimit: 10,
+        queueLimit: 0,
         charset: "utf8mb4",
         debug: true,
       });
@@ -43,7 +38,7 @@ const getUserData = async (user_id) => {
             error.message,
             error.stack
           );
-          console.log("query: ", q_str);
+          throw error;
         } else {
           resolve(results[0]);
         }
