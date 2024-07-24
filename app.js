@@ -1,163 +1,52 @@
-import { PORT } from "./services/internal_db/config.js";
-import { pool } from "./services/internal_db/db.js";
-import express from "express";
-import bot from "@bot-whatsapp/bot";
-import { getDay } from "date-fns";
-import QRPortalWeb from "@bot-whatsapp/portal";
-import BaileysProvider from "@bot-whatsapp/provider/baileys";
-import MockAdapter from "@bot-whatsapp/database/mock";
-import menu from "./services/internal_db/menu.js";
-//import user from "./services/internal_db/user.js";
-//import hacerPedido from "./services/internal_db/pedidos.js";
-//import chatgpt from "./services/openai/chatgpt.js";
-const app = express();
+var createError = require("http-errors");
+var express = require("express");
+var path = require("path");
+var cookieParser = require("cookie-parser");
+var logger = require("morgan");
 
-app.listen(PORT);
+var session = require("express-session");
 
-const USER_ID = 1; //nombre Emiliano, nombre empresa: La bona pasta, temporal , luego hay que automatizar--
-var nombre_fantasia = "";
+var indexRouter = require("./routes/index");
+var usersRouter = require("./routes/users");
 
-console.log("nombre fantasia 2 : ", nombre_fantasia);
-const PEDIDO = [];
+var app = express();
+app.listen(3001);
 
-//console.log(givenMenu);
-const flowPrincipal = bot
-  .addKeyword(["resto"])
-  .addAnswer([
-    `Bienvenido/a *`,
-    nombre_fantasia,
-    `* 🫕`,
-    `Tenemos menús diarios variados`,
-    `Te gustaria conocerlos ¿?`,
-    `Escribe *marito*`,
-  ]);
-var givenMenu = [];
-const flowMenu = bot
-  .addKeyword("marito")
-  .addAnswer(
-    `Hoy tenemos el siguiente menu:`,
-    null,
-    async (_, { flowDynamic }) => {
-      givenMenu = await menu.getMenu(USER_ID);
-      const dayNumber = getDay(new Date());
-      for (var i = 0; i < givenMenu.length; i++) {
-        await flowDynamic("*" + i.toString() + "* - " + givenMenu[i].nombre);
-      }
-    }
-  )
-  .addAnswer(
-    `Te interesa alguno?`,
-    { capture: true },
-    async (ctx, { gotoFlow, state, flowDynamic }) => {
-      const txt = ctx.body;
-      if (typeof givenMenu[parseInt(ctx.body)] === "undefined") {
-        return gotoFlow(flowEmpty);
-      } else {
-        //state.update({ pedido: ctx.body });
-        var idx = parseInt(ctx.body);
-        PEDIDO.push({
-          id_menu_unico: givenMenu[idx].id_menu_unico,
-          usr_id: givenMenu[idx].usr_id,
-          id_menu_cliente: givenMenu[idx].id_menu_cliente,
-          nombre: givenMenu[idx].nombre,
-          descripcion: givenMenu[idx].descripcion,
-        });
-        await flowDynamic("Anotado ✍️, hasta el momento este es tu pedido..");
-        //var pedidoIdx = 0;
-        for await (const pedido of PEDIDO) {
-          await flowDynamic("- *" + pedido.nombre + "* ✅");
-        }
-      }
-    }
-  )
-  .addAnswer(
-    "Querés *1- seguir* pidiendo o *2- finalizar* tu pedido ?",
-    { capture: true },
-    async (ctx, { gotoFlow, state, flowDynamic }) => {
-      if (ctx.body == "seguir" || ctx.body == "Seguir" || ctx.body == "1") {
-        await gotoFlow(flowMenu);
-      } else if (
-        ctx.body == "finalizar" ||
-        ctx.body == "Finalizar" ||
-        ctx.body == "2"
-      ) {
-        await gotoFlow(flowPedido);
-      } else {
-        await gotoFlow(flowEmpty);
-      }
-    }
-  );
+app.use(
+  session({
+    secret: "webslesson",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
-const flowEmpty = bot
-  .addKeyword(bot.EVENTS.ACTION)
-  .addAnswer("*No te he entendido!*", null, async (_, { gotoFlow }) => {
-    return gotoFlow(flowMenu);
-  });
+// view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
-const flowPedido = bot
-  .addKeyword(["pedir"], { sensitive: true })
-  .addAnswer(
-    "¿Cual es tu nombre?",
-    { capture: true },
-    async (ctx, { state }) => {
-      state.update({ name: ctx.body });
-      //console.log(state.getMyState());
-    }
-  )
-  .addAnswer(
-    "¿Dirección del pedido?",
-    { capture: true },
-    async (ctx, { state }) => {
-      state.update({ direccion: ctx.body });
-      //console.log(state.getMyState());
-    }
-  )
-  .addAnswer(
-    "¿Alguna observacion?",
-    { capture: true },
-    async (ctx, { state }) => {
-      state.update({ observaciones: ctx.body });
-      //console.log(state.getMyState());
-    }
-  )
-  .addAnswer(
-    "Perfecto tu pedido ya fué solicitado, aguardanos a que te notifiquemos..",
-    null,
-    async (ctx, { state, endFlow }) => {
-      state.update({ pedido: PEDIDO });
-      const currentState = state.getMyState();
-      const pedidoBackEnd = await hacerPedido.hacerPedido(currentState);
-      console.log(pedidoBackEnd);
-      console.log(currentState);
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 
-      //HACER UN FLUSH => PEDIDO = [];
-      /*  return endFlow({ body: "Gracias por elegirnos ! " }); */
-    }
-  );
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
-const main = async () => {
-  const adapterDB = new MockAdapter();
-  const adapterFlow = bot.createFlow([
-    flowPrincipal,
-    flowMenu,
-    flowPedido,
-    flowEmpty,
-  ]);
-  const adapterProvider = bot.createProvider(BaileysProvider);
-
-  bot.createBot({
-    flow: adapterFlow,
-    provider: adapterProvider,
-    database: adapterDB,
-  });
-
-  QRPortalWeb({ port: 8080 });
-};
-app.get("/user/" + USER_ID, async (req, res) => {
-  const [rows] = await pool.query(`SELECT * FROM users WHERE id = ${USER_ID}`);
-  nombre_fantasia = rows.nombre_fantasia;
-  console.log("nombre fantasia: ", nombre_fantasia);
-  //res.json(rows);
-  main();
-  //res.send("Servicio disponible");
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
 });
+
+// error handler
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render("error");
+});
+
+module.exports = app;
